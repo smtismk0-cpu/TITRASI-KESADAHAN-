@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titrasi Kesadahan Air & Kalkulator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #0056b3;
+            margin-top: 0;
+        }
+        .card {
+            background: #eef6ff;
+            border-left: 4px solid #0056b3;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #003d80;
+        }
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 4px;
+            display: none;
+        }
+        .result-box h3 {
+            margin: 0 0 5px 0;
+            color: #2e7d32;
+        }
+        .formula {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Titrasi Kesadahan Air (EDTA)</h1>
+    
+    <div class="card">
+        <p><strong>Ringkasan:</strong> Kesadahan total diukur dengan menitrasi ion $\text{Ca}^{2+}$ dan $\text{Mg}^{2+}$ menggunakan larutan standar **EDTA** pada pH 10 (buffer amonia) dengan indikator **EBT** (perubahan warna dari merah keperakan menjadi biru).</p>
+    </div>
+
+    <h2>Rumus Perhitungan</h2>
+    <div class="formula">
+        Kesadahan (mg/L CaCO₃) = (V_EDTA × M_EDTA × 100.09 × 1000) / V_Sampel
+    </div>
+    <p><small>*100.09 adalah Massa Molar CaCO₃ (g/mol)</small></p>
+
+    <hr style="border:0; border-top: 1px solid #eee; margin: 20px 0;">
+
+    <h2>Kalkulator Hasil Titrasi</h2>
+    <form id="hardnessForm">
+        <div class="form-group">
+            <label for="volumeSample">Volume Sampel Air (mL):</label>
+            <input type="number" id="volumeSample" step="any" placeholder="Contoh: 50" required>
+        </div>
+
+        <div class="form-group">
+            <label for="volumeEdta">Volume EDTA Terpakai (mL):</label>
+            <input type="number" id="volumeEdta" step="any" placeholder="Contoh: 12.5" required>
+        </div>
+
+        <div class="form-group">
+            <label for="molarityEdta">Molaritas / Konsentrasi EDTA (M):</label>
+            <input type="number" id="molarityEdta" step="any" value="0.01" required>
+        </div>
+
+        <button type="button" onclick="calculateHardness()">Hitung Kesadahan</button>
+    </form>
+
+    <div id="resultBox" class="result-box">
+        <h3>Hasil Perhitungan:</h3>
+        <p id="resultText" style="font-size: 18px; font-weight: bold; margin: 5px 0;"></p>
+        <p id="categoryText" style="margin: 0; color: #555;"></p>
+    </div>
+</div>
+
+<script>
+    function calculateHardness() {
+        const vSample = parseFloat(document.getElementById('volumeSample').value);
+        const vEdta = parseFloat(document.getElementById('volumeEdta').value);
+        const mEdta = parseFloat(document.getElementById('molarityEdta').value);
+
+        if (!vSample || !vEdta || !mEdta || vSample <= 0) {
+            alert("Harap masukkan nilai yang valid.");
+            return;
+        }
+
+        // Rumus: (V_EDTA * M_EDTA * 100.09 * 1000) / V_Sample
+        const mrCaCO3 = 100.09;
+        const hardness = (vEdta * mEdta * mrCaCO3 * 1000) / vSample;
+
+        // Kategori Kesadahan
+        let category = "";
+        if (hardness < 60) {
+            category = "Kategori: Lunak (Soft)";
+        } else if (hardness <= 120) {
+            category = "Kategori: Sedang (Moderately Hard)";
+        } else if (hardness <= 180) {
+            category = "Kategori: Sadah (Hard)";
+        } else {
+            category = "Kategori: Sangat Sadah (Very Hard)";
+        }
+
+        // Tampilkan Hasil
+        document.getElementById('resultText').innerText = hardness.toFixed(2) + " mg/L CaCO₃ (ppm)";
+        document.getElementById('categoryText').innerText = category;
+        document.getElementById('resultBox').style.display = "block";
+    }
+</script>
+
+</body>
+</html>
